@@ -47,7 +47,7 @@ namespace OpenUtau.Core.Format {
             if (ext == ".aiff" || ext == ".aif" || ext == ".aifc") {
                 return new AiffFileReader(filepath);
             }
-            throw new Exception("Unsupported audio file format.");
+            throw new MessageCustomizableException("Unsupported audio file format.", $"<translate:errors.unsupported.audio>", new FormatException("Unsupported audio file format."));
         }
 
         public static float[] GetStereoSamples(WaveStream waveStream) {
