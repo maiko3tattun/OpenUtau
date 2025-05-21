@@ -13,6 +13,7 @@ namespace OpenUtau.App.ViewModels {
         private UVoicePart part;
         public UNote note;
         private int index;
+        public bool loading = true;
 
         public PhonemeParamViewModel(UVoicePart part, UPhoneme phoneme) {
             this.part = part;
@@ -24,6 +25,7 @@ namespace OpenUtau.App.ViewModels {
 
             this.WhenAnyValue(x => x.Offset)
                 .Subscribe(value => {
+                    if (loading) return;
                     if (!int.TryParse(value.ToString(), out int i)) {
                         Offset = (note.GetPhonemeOverride(index).offset ?? 0).ToString();
                         return;
@@ -35,23 +37,25 @@ namespace OpenUtau.App.ViewModels {
             );
             this.WhenAnyValue(x => x.Preutter)
                 .Subscribe(value => {
+                    if (loading) return;
                     if (!float.TryParse(value.ToString(), out float f)) {
                         Preutter = (note.GetPhonemeOverride(index).preutterDelta ?? 0).ToString();
                         return;
                     }
                     DocManager.Inst.StartUndoGroup();
-                    DocManager.Inst.ExecuteCmd(new PhonemePreutterCommand(part, note, index, f));
+                    DocManager.Inst.ExecuteCmd(new PhonemePreutterCommand(part, note, index, phoneme, f));
                     DocManager.Inst.EndUndoGroup();
                 }
             );
             this.WhenAnyValue(x => x.Overlap)
                 .Subscribe(value => {
+                    if (loading) return;
                     if (!float.TryParse(value.ToString(), out float f)) {
                         Overlap = (note.GetPhonemeOverride(index).overlapDelta ?? 0).ToString();
                         return;
                     }
                     DocManager.Inst.StartUndoGroup();
-                    DocManager.Inst.ExecuteCmd(new PhonemeOverlapCommand(part, note, index, f));
+                    DocManager.Inst.ExecuteCmd(new PhonemeOverlapCommand(part, note, index, phoneme, f));
                     DocManager.Inst.EndUndoGroup();
                 }
             );
