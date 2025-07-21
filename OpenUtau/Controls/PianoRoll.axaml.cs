@@ -39,6 +39,7 @@ namespace OpenUtau.App.Controls {
         private NoteEditState? editState;
         private Point valueTipPointerPosition;
         private bool shouldOpenNotesContextMenu;
+        private List<UNote> selectTargets = new List<UNote>();
 
         private bool isSelectingRange;
         private Point rangeSelectStartPoint = default;
@@ -603,9 +604,15 @@ namespace OpenUtau.App.Controls {
             var part = ViewModel.NotesViewModel.Part;
             if (part != null) {
                 var tone = ViewModel.NotesViewModel.PointToTone(args.GetPosition(element));
-                var notes = part.notes.Where(note => note.tone == tone);
-                ViewModel.NotesViewModel.Selection.Select(notes);
-                MessageBus.Current.SendMessage(new NotesSelectionEvent(ViewModel.NotesViewModel.Selection));
+                var selection = ViewModel.NotesViewModel.Selection;
+                if (selection.Count > 1) {
+                    selectTargets = selection.ToList();
+                } else {
+                    selectTargets = part.notes.ToList();
+                }
+                var notes = selectTargets.Where(note => note.tone == tone);
+                selection.Select(notes);
+                MessageBus.Current.SendMessage(new NotesSelectionEvent(selection));
             }
         }
 
@@ -617,7 +624,7 @@ namespace OpenUtau.App.Controls {
                 var part = ViewModel.NotesViewModel.Part;
                 if (part != null) {
                     var tone = ViewModel.NotesViewModel.PointToTone(args.GetPosition(element));
-                    var notes = part.notes.Where(note => note.tone == tone);
+                    var notes = selectTargets.Where(note => note.tone == tone);
                     ViewModel.NotesViewModel.Selection.Add(notes);
                     MessageBus.Current.SendMessage(new NotesSelectionEvent(ViewModel.NotesViewModel.Selection));
                 }
