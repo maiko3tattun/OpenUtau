@@ -18,7 +18,6 @@ namespace OpenUtau.Classic {
             Ustx.DYN,
             Ustx.PITD,
             Ustx.CLR,
-            Ustx.SHFT,
             Ustx.ENG,
             Ustx.VEL,
             Ustx.VOL,
@@ -27,6 +26,8 @@ namespace OpenUtau.Classic {
             Ustx.MOD,
             Ustx.MODP,
             Ustx.ALT,
+            Ustx.DIR,
+            Ustx.SHFT
         };
 
         public USingerType SingerType => USingerType.Classic;
@@ -103,6 +104,7 @@ namespace OpenUtau.Classic {
                 string progressInfo = $"Track {trackNo + 1} : {phrase.wavtool} \"{string.Join(" ", phrase.phones.Select(p => p.phoneme))}\"";
                 progress.Complete(0, progressInfo);
                 var wavPath = Path.Join(PathManager.Inst.CachePath, $"cat-{phrase.hash:x16}.wav");
+                phrase.AddCacheFile(wavPath);
                 var result = Layout(phrase);
                 if (File.Exists(wavPath)) {
                     try {
