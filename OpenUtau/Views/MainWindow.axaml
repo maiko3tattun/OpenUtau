@@ -209,7 +209,7 @@
         </Grid>
       
         <!--Main page-->
-        <Grid ColumnDefinitions="300,*,24" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid ColumnDefinitions="300,*,24" Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Name="MainPageGrid">
           <Grid.RowDefinitions>
             <RowDefinition Height="24"/>
             <RowDefinition Height="24"/>

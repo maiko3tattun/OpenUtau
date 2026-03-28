@@ -1246,6 +1246,7 @@ namespace OpenUtau.App.Views {
                 }
                 Preferences.Default.DetachPianoRoll = true;
             }
+            this.MainPageGrid.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Star);
             Preferences.Save();
         }
 
