@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -39,7 +37,7 @@ namespace OpenUtau.App.Controls {
         private NoteEditState? editState;
         private Point valueTipPointerPosition;
         private bool shouldOpenNotesContextMenu;
-        private List<UNote> selectTargets = new List<UNote>();
+        private UNote[] selectTargets = Array.Empty<UNote>();
 
         private ReactiveCommand<Unit, Unit>? lyricsDialogCommand;
         private ReactiveCommand<Unit, Unit>? noteDefaultsCommand;
@@ -522,26 +520,27 @@ namespace OpenUtau.App.Controls {
 
         public void KeyboardPointerPressed(object sender, PointerPressedEventArgs args) {
             LyricBox?.EndEdit();
-            if (keyboardPlayState != null) {
-                return;
-            }
             var element = (TrackBackground)sender;
-            keyboardPlayState = new KeyboardPlayState(element, ViewModel);
-            keyboardPlayState.Begin(args.Pointer, args.GetPosition(element));
 
             var part = ViewModel.NotesViewModel.Part;
-            if (part != null) {
-                var tone = ViewModel.NotesViewModel.PointToTone(args.GetPosition(element));
+            if (part != null && args.KeyModifiers.HasFlag(KeyModifiers.Shift)) {
                 var selection = ViewModel.NotesViewModel.Selection;
                 if (selection.Count > 1) {
-                    selectTargets = selection.ToList();
+                    selectTargets = selection.ToArray();
                 } else {
-                    selectTargets = part.notes.ToList();
+                    selectTargets = part.notes.ToArray();
                 }
+                var tone = ViewModel.NotesViewModel.PointToTone(args.GetPosition(element));
                 var notes = selectTargets.Where(note => note.tone == tone);
                 selection.Select(notes);
                 MessageBus.Current.SendMessage(new NotesSelectionEvent(selection));
             }
+
+            if (keyboardPlayState != null) {
+                return;
+            }
+            keyboardPlayState = new KeyboardPlayState(element, ViewModel);
+            keyboardPlayState.Begin(args.Pointer, args.GetPosition(element));
         }
 
         public void KeyboardPointerMoved(object sender, PointerEventArgs args) {
@@ -550,7 +549,7 @@ namespace OpenUtau.App.Controls {
                 keyboardPlayState.Update(args.Pointer, args.GetPosition(element));
 
                 var part = ViewModel.NotesViewModel.Part;
-                if (part != null) {
+                if (part != null && args.KeyModifiers.HasFlag(KeyModifiers.Shift)) {
                     var tone = ViewModel.NotesViewModel.PointToTone(args.GetPosition(element));
                     var notes = selectTargets.Where(note => note.tone == tone);
                     ViewModel.NotesViewModel.Selection.Add(notes);
