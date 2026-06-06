@@ -12,9 +12,9 @@ using SharpCompress;
 
 namespace OpenUtau.Classic {
     public class FileTrace {
-        public string file;
+        public string file = string.Empty;
         public int lineNumber;
-        public string line;
+        public string line = string.Empty;
         public FileTrace() { }
         public FileTrace(FileTrace other) {
             file = other.file;
@@ -90,9 +90,9 @@ namespace OpenUtau.Classic {
                 }
             }
             string singerType = bankConfig?.SingerType ?? string.Empty;
-            if(SingerTypeUtils.SingerTypeFromName.ContainsKey(singerType)){
+            if (SingerTypeUtils.SingerTypeFromName.ContainsKey(singerType)) {
                 voicebank.SingerType = SingerTypeUtils.SingerTypeFromName[singerType];
-            }else{
+            } else {
                 // Legacy detection code. Do not add more here.
                 var enuconfigFile = Path.Combine(dir, kEnuconfigYaml);
                 var dsconfigFile = Path.Combine(dir, kDsconfigYaml);
@@ -397,7 +397,7 @@ namespace OpenUtau.Classic {
                     var oto = new Oto {
                         Alias = Path.GetFileNameWithoutExtension(file),
                         Wav = file,
-                        FileTrace = new FileTrace { file = wav, lineNumber = 0 }
+                        FileTrace = null,
                     };
                     oto.Phonetic = oto.Alias;
                     otoSet.Otos.Add(oto);
@@ -417,7 +417,9 @@ namespace OpenUtau.Classic {
                 string path = Path.Combine(dir, group.Key);
                 if (!File.Exists(path)) {
                     if (NFDFiles.TryGetValue(group.Key.Normalize(), out string NFDFile)) {
-                        group.ForEach(oto => oto.Wav = NFDFile);
+                        foreach (var oto in group) {
+                            oto.Wav = NFDFile;
+                        }
                     } else {
                         Log.Error($"Sound file missing. {path}");
                         foreach (Oto oto in group) {
