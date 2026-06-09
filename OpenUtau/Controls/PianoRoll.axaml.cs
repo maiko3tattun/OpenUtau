@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -346,7 +344,20 @@ namespace OpenUtau.App.Controls {
             if (ViewModel.NotesViewModel.Part == null || ViewModel.NotesViewModel.Part.notes.Count == 0) {
                 return;
             }
+            LyricsPanel.IsVisible = false;
             SearchBar.Show(ViewModel.NotesViewModel);
+        }
+
+        void OnMenuEditLyrics(object? sender, RoutedEventArgs e) {
+            EditLyrics();
+        }
+
+        void EditLyrics() {
+            if (ViewModel.NotesViewModel.Part == null) {
+                return;
+            }
+            SearchBar.IsVisible = false;
+            LyricsPanel.Show(ViewModel.NotesViewModel);
         }
 
         void ReplaceLyrics() {
@@ -368,32 +379,6 @@ namespace OpenUtau.App.Controls {
             }
             var vm = new LyricsReplaceViewModel(ViewModel.NotesViewModel.Part, notes);
             var dialog = new LyricsReplaceDialog() {
-                DataContext = vm,
-            };
-            dialog.ShowDialog(RootWindow);
-        }
-
-        void OnMenuEditLyrics(object? sender, RoutedEventArgs e) {
-            EditLyrics();
-        }
-
-        void EditLyrics() {
-            if (ViewModel.NotesViewModel.Part == null) {
-                return;
-            }
-            if (ViewModel.NotesViewModel.Part.notes.Count < 1) {
-                _ = MessageBox.Show(
-                    RootWindow,
-                    ThemeManager.GetString("lyrics.nonote"),
-                    ThemeManager.GetString("lyrics.caption"),
-                    MessageBox.MessageBoxButtons.Ok);
-                return;
-            }
-
-            var vm = new LyricsViewModel();
-            var (notes, selection) = ViewModel.NotesViewModel.PrepareInsertLyrics();
-            vm.Start(ViewModel.NotesViewModel.Part, notes, selection);
-            var dialog = new LyricsDialog() {
                 DataContext = vm,
             };
             dialog.ShowDialog(RootWindow);
