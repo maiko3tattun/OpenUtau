@@ -17,9 +17,8 @@ namespace OpenUtau.App.Controls {
             LyricsBox.AddHandler(LostFocusEvent, TextBoxLostFocus, RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
         }
 
-        public void Show(NotesViewModel notesVm) {
-            viewModel = new LyricsViewModel(notesVm);
-            DataContext = viewModel;
+        public void Show(LyricsViewModel viewModel) {
+            DataContext = this.viewModel = viewModel;
             IsVisible = true;
         }
 
@@ -46,7 +45,7 @@ namespace OpenUtau.App.Controls {
                     e.Handled = true;
                     break;
                 default:
-                    if (e.Key >= Key.A && e.Key <= Key.Z && e.KeyModifiers != KeyModifiers.None) {
+                    if (e.Key == Key.Z && e.KeyModifiers != KeyModifiers.None || e.Key == Key.Y && e.KeyModifiers != KeyModifiers.None) { // Todo: Supports shortcut remapping
                         // Finish lyrics editing and use the original shortcut
                         this.Focus();
                     }

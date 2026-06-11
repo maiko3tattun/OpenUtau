@@ -231,13 +231,19 @@ namespace OpenUtau.App.Views {
         public override void Begin(IPointer pointer, Point point) {
             base.Begin(pointer, point);
             note = vm.NotesViewModel.MaybeAddNote(point, false);
-            if (note != null && playTone) {
-                if (PlaybackManager.Inst.PlayingMaster) {
-                    // Stop playback if playing project
-                    PlaybackManager.Inst.StopPlayback();
+            if (note != null) {
+                var flowin = vm.NotesViewModel.LyricsViewModel.GetFirstLyric();
+                if (!string.IsNullOrEmpty(flowin)) {
+                    note.lyric = flowin;
                 }
-                activeTone = note.tone;
-                PlaybackManager.Inst.PlayTone(MusicMath.ToneToFreq(note.tone));
+                if (playTone) {
+                    if (PlaybackManager.Inst.PlayingMaster) {
+                        // Stop playback if playing project
+                        PlaybackManager.Inst.StopPlayback();
+                    }
+                    activeTone = note.tone;
+                    PlaybackManager.Inst.PlayTone(MusicMath.ToneToFreq(note.tone));
+                }
             }
         }
         public override void Update(IPointer pointer, Point point) {

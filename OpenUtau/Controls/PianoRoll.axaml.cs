@@ -357,7 +357,7 @@ namespace OpenUtau.App.Controls {
                 return;
             }
             SearchBar.IsVisible = false;
-            LyricsPanel.Show(ViewModel.NotesViewModel);
+            LyricsPanel.Show(ViewModel.NotesViewModel.LyricsViewModel);
         }
 
         void ReplaceLyrics() {

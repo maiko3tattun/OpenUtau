@@ -9,7 +9,7 @@ using ReactiveUI.Fody.Helpers;
 using SharpCompress;
 
 namespace OpenUtau.App.ViewModels {
-    class LyricsViewModel : ViewModelBase {
+    public class LyricsViewModel : ViewModelBase {
         [Reactive] public string Text { get; set; } = string.Empty;
         [Reactive] public int CurrentCount { get; set; }
         [Reactive] public int TotalCount { get; set; }
@@ -24,12 +24,6 @@ namespace OpenUtau.App.ViewModels {
         public LyricsViewModel(NotesViewModel notesVm) {
             notesViewModel = notesVm;
 
-            this.WhenAnyValue(x => x.Text)
-                .Subscribe(text => {
-                    if (IsFocused) {
-                        ApplyLyrics();
-                    }
-                });
             this.WhenAnyValue(x => x.SkipSymbols)
                 .Subscribe(a => {
                     FilterNotes();
@@ -53,7 +47,15 @@ namespace OpenUtau.App.ViewModels {
                 DocManager.Inst.EndUndoGroup();
                 IsFocused = false;
             }
-            if (notesViewModel == null || notesViewModel.Part == null || selection.Length == 0) {
+            if (notesViewModel == null || notesViewModel.Part == null) {
+                notes = [];
+                Text = string.Empty;
+                TotalCount = 0;
+                CurrentCount = 0;
+            } else if (selection.Length == 0) {
+                notes = [];
+                CurrentCount = SplitLyrics.Split(Text).Count;
+                if (TotalCount == 0) return;
                 Text = string.Empty;
                 TotalCount = 0;
                 CurrentCount = 0;
@@ -69,7 +71,7 @@ namespace OpenUtau.App.ViewModels {
             }
         }
 
-        private void ApplyLyrics() {
+        public void ApplyLyrics() {
             var lyrics = SplitLyrics.Split(Text);
             CurrentCount = lyrics.Count;
 
@@ -79,6 +81,15 @@ namespace OpenUtau.App.ViewModels {
 
             int count = Math.Min(lyrics.Count, notes.Length);
             DocManager.Inst.ExecuteCmd(new ChangeNoteLyricCommand(notesViewModel.Part, notes.Take(count).ToArray(), lyrics.Take(count).ToArray()));
+        }
+
+        public string? GetFirstLyric() {
+            var split = SplitLyrics.Split(Text);
+            if (string.IsNullOrWhiteSpace(split.FirstOrDefault())) return null;
+            var lyric = split[0];
+            split.RemoveAt(0);
+            Text = SplitLyrics.Join(split);
+            return lyric;
         }
     }
 }
