@@ -98,6 +98,7 @@ namespace OpenUtau.App.ViewModels {
         public Dictionary<Key, MenuItemViewModel> LegacyPluginShortcuts { get; private set; }
             = new Dictionary<Key, MenuItemViewModel>();
 
+        [Reactive] public string StatusBarText { get; set; } = string.Empty;
         [Reactive] public double Progress { get; set; }
         [Reactive] public bool CanUndo { get; set; } = false;
         [Reactive] public bool CanRedo { get; set; } = false;
@@ -217,6 +218,75 @@ namespace OpenUtau.App.ViewModels {
             });
             LoadLegacyPlugins();
             DocManager.Inst.AddSubscriber(this);
+        }
+
+        public void SetStatusBarText(string pointer) {
+            switch (pointer) {
+                case "Keyboard":
+                    StatusBarText = "Click to play a sound";
+                    break;
+                case "Timeline":
+                    StatusBarText = "Timeline";
+                    break;
+                case "NotesCanvas":
+                    switch (EditTool.CurrentTool) {
+                        case EditTools.CursorTool:
+                            StatusBarText = "選択";
+                            break;
+                        case EditTools.PenTool:
+                            StatusBarText = "Ctrlを押して選択";
+                            break;
+                        case EditTools.PenPlusTool:
+                            StatusBarText = "ペンプラスツール";
+                            break;
+                        case EditTools.EraserTool:
+                            break;
+                        case EditTools.DrawPitchTool:
+                            break;
+                        case EditTools.OverwritePitchTool:
+                            break;
+                        case EditTools.DrawLinePitchTool:
+                            break;
+                        case EditTools.OverwriteLinePitchTool:
+                            break;
+                        case EditTools.KnifeTool:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case "PhonemeCanvas":
+                    StatusBarText = "PhonemeCanvas";
+                    break;
+                case "ExpCanvas":
+                    switch (CurveViewModel.CurveTool) {
+                        case CurveTools.CurveSelectTool:
+                            StatusBarText = "選択";
+                            break;
+                        case CurveTools.CurvePenTool:
+                            StatusBarText = "Ctrlを押して選択";
+                            break;
+                        case CurveTools.CurveEraserTool:
+                            StatusBarText = "ペンプラスツール";
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case "Background":
+                    StatusBarText = string.Empty;
+                    break;
+                default:
+                    StatusBarText = string.Empty;
+                    break;
+            }
+        }
+        private string GetStatusText(string[] keys) {
+            var strings = new List<string>();
+            foreach (string key in keys) {
+                strings.Add(ThemeManager.GetString(key));
+            }
+            return string.Join(", ", strings);
         }
 
         private void SetUndoState() {

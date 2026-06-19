@@ -22,7 +22,7 @@
         <RowDefinition Height="150" 
                        MinHeight="{Binding NotesViewModel.ExpHeightMin}"
                        MaxHeight="{Binding NotesViewModel.ExpHeightMax}"/>
-        <RowDefinition Height="4"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="60"/>
@@ -669,7 +669,10 @@
           <TextBlock Name="ValueTipText" Margin="2"/>
         </Border>
       </Canvas>
-      <ProgressBar Grid.Row="6" Grid.ColumnSpan="4" Value="{Binding Progress}" IsVisible="{Binding PianoRollDetached}"/>
+      <StackPanel Grid.Row="6" Grid.ColumnSpan="4">
+        <TextBlock Height="20" Margin="4,4,4,0" Text="{Binding StatusBarText}"/>
+        <ProgressBar Value="{Binding Progress}" IsVisible="{Binding PianoRollDetached}" Height="4"/>
+      </StackPanel>
     </Grid>
   </Border>
 </UserControl>
