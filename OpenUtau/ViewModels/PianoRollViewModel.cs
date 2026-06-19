@@ -5,7 +5,6 @@ using System.Reactive;
 using Avalonia.Input;
 using Avalonia.Threading;
 using DynamicData.Binding;
-using NAudio.CoreAudioApi;
 using OpenUtau.App.Controls;
 using OpenUtau.Classic;
 using OpenUtau.Core;
