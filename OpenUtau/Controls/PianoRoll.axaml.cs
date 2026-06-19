@@ -397,16 +397,19 @@ namespace OpenUtau.App.Controls {
             penTool.Classes.Remove("penTool");
             penTool.Classes.Remove("penPlusTool");
             penTool.Classes.Add(ViewModel.EditTool.PenToolVariation == 1 ? "penPlusTool" : "penTool");
+            ToolTip.SetTip(penTool, ViewModel.EditTool.PenToolVariation == 1 ? ViewModel.PenPlusToolTip : ViewModel.PenToolTip);
         }
         void SetDrawPitchToolIcon() {
             drawPitchTool.Classes.Remove("drawPitchTool");
             drawPitchTool.Classes.Remove("overwritePitchTool");
             drawPitchTool.Classes.Add(ViewModel.EditTool.DrawPitchToolVariation == 1 ? "overwritePitchTool" : "drawPitchTool");
+            ToolTip.SetTip(drawPitchTool, ViewModel.EditTool.DrawPitchToolVariation == 1 ? ViewModel.OverwritePitchToolTip : ViewModel.DrawPitchToolTip);
         }
         void SetDrawLinePitchToolIcon() {
             drawLinePitchTool.Classes.Remove("drawLinePitchTool");
             drawLinePitchTool.Classes.Remove("overwriteLinePitchTool");
             drawLinePitchTool.Classes.Add(ViewModel.EditTool.DrawLinePitchToolVariation == 1 ? "overwriteLinePitchTool" : "drawLinePitchTool");
+            ToolTip.SetTip(drawLinePitchTool, ViewModel.EditTool.DrawLinePitchToolVariation == 1 ? ViewModel.OverwriteLinePitchToolTip : ViewModel.DrawLinePitchToolTip);
         }
 
         void SearchNote() {
