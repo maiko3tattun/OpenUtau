@@ -92,6 +92,9 @@ namespace OpenUtau.Core.Ustx {
         [YamlIgnore] public bool Muted { set; get; }
         public bool Mute { get; set; }
         public bool Solo { get; set; }
+        // Per-track post-processing FX.  null = no FX configured (bypass).
+        // Backwards compatible: older ustx files simply load with this null.
+        public UMixFx MixFx { get; set; }
         public double Volume { set; get; }
         public double Pan { set; get; }
 
@@ -208,7 +211,7 @@ namespace OpenUtau.Core.Ustx {
         public void AfterLoad(UProject project) {
             if (Phonemizer == null || !string.IsNullOrEmpty(phonemizer)) {
                 try {
-                    var factory = DocManager.Inst.PhonemizerFactories.FirstOrDefault(factory => factory.type.FullName == phonemizer);
+                    var factory = PhonemizerFactory.Get(phonemizer);
                     Phonemizer = factory?.Create();
                     phonemizer = null;
                 } catch (Exception e) {
@@ -230,7 +233,7 @@ namespace OpenUtau.Core.Ustx {
             if (Singer != null && Singer.Found) {
                 if (string.IsNullOrEmpty(RendererSettings.renderer)) {
                     RendererSettings.renderer = Renderers.GetDefaultRenderer(Singer.SingerType);
-                };
+                }
             }
             TrackNo = project.tracks.IndexOf(this);
             if (!Solo && Mute) {
