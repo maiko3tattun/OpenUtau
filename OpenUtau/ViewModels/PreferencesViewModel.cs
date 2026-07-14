@@ -437,7 +437,12 @@ namespace OpenUtau.App.ViewModels {
                 if (string.IsNullOrEmpty(path)) {
                     path = "default path";
                 }
-                var customEx = new MessageCustomizableException("Failed to set data path", "<translate:prefs.paths.datapath.error>", e, true, [path]);
+                Exception customEx;
+                if (e is UnauthorizedAccessException) {
+                    customEx = new MessageCustomizableException("Failed to set data path", "<translate:prefs.paths.datapath.unauthorized>", e, true, [path]);
+                } else {
+                    customEx = new MessageCustomizableException("Failed to set data path", "<translate:prefs.paths.datapath.error>", e, true, [path]);
+                }
                 DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));
                 return false;
             }

@@ -40,7 +40,7 @@ namespace OpenUtau.App {
             Log.Information($"Data path = {PathManager.Inst.DataPath}");
             Log.Information($"Cache path = {PathManager.Inst.CachePath}");
             foreach (var error in Preferences.LoadingErrors) {
-                Log.Error(error);
+                Log.Error(error.Message);
             }
             var cusomDataPath = string.IsNullOrEmpty(PathManager.Inst.CustomDataPath) ? "none" : PathManager.Inst.CustomDataPath;
             Log.Information($"Custom Data path = {cusomDataPath}");

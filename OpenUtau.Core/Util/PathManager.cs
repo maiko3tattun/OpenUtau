@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,7 +40,7 @@ namespace OpenUtau.Core {
                 CachePath = Path.Combine(cacheHome, "OpenUtau");
                 HomePathIsAscii = true;
             } else {
-                string exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                string exePath = Path.GetDirectoryName(Environment.ProcessPath);
                 IsInstalled = File.Exists(Path.Combine(exePath, "installed.txt"));
                 if (!IsInstalled) {
                     _dataPath = exePath;
@@ -88,6 +87,42 @@ namespace OpenUtau.Core {
         public string PrefsFilePath => Path.Combine(_dataPath, "prefs.json");
         public string NotePresetsFilePath => Path.Combine(_dataPath, "notepresets.json");
         public string BackupsPath => Path.Combine(_dataPath, "Backups");
+
+        public void ValidatePaths() {
+            // Default data path authorization check
+            var tempPath = Path.Combine(_dataPath, "temp.txt");
+            try {
+                File.WriteAllText(tempPath, "default data directory");
+            } catch (Exception e) {
+                Preferences.LoadingErrors.Add(new MessageCustomizableException($"Cannot access default data directory: {_dataPath}", $"<translate:startuperror.defaultdatapath.unauthorized>: {_dataPath}", e));
+            } finally {
+                File.Delete(tempPath);
+            }
+
+            // Cloud folder check
+            try {
+                List<string> paths = new List<string> { _dataPath, Path.GetDirectoryName(Environment.ProcessPath)! };
+                if (!string.IsNullOrEmpty(CustomDataPath)) {
+                    paths.Add(CustomDataPath);
+                }
+                paths = paths.Distinct().ToList();
+                foreach (var path in paths) {
+                    string fullPath = Path.GetFullPath(path);
+                    string lowerPath = fullPath.ToLowerInvariant();
+                    if (lowerPath.Contains("onedrive") ||
+                        lowerPath.Contains("googledrive") || lowerPath.Contains("google drive") ||
+                        lowerPath.Contains("dropbox") ||
+                        lowerPath.Contains("mobile documents")) { // iCloud
+                        Preferences.LoadingErrors.Add(new MessageCustomizableException($"This folder may be located on a cloud storage: {fullPath}", $"<translate:startuperror.cloudfolder>: {fullPath}", new ArgumentException()));
+                    } else {
+                        DriveInfo drive = new DriveInfo(Path.GetPathRoot(path)!);
+                        if (drive.VolumeLabel.Contains("Google Drive")) {
+                            Preferences.LoadingErrors.Add(new MessageCustomizableException($"This folder may be located on a cloud storage: {fullPath}", $"<translate:startuperror.cloudfolder>: {fullPath}", new ArgumentException()));
+                        }
+                    }
+                }
+            } catch { }
+        }
 
         public List<string> SingersPaths {
             get {
