@@ -328,7 +328,6 @@ namespace OpenUtau.App.ViewModels {
                             } else {
                                 exp.FlagValue = string.Empty;
                             }
-                            exp.Warning = string.Empty;
                             continue;
                         }
 
@@ -366,7 +365,6 @@ namespace OpenUtau.App.ViewModels {
                             exp.SelectedOption = (int)exp.defaultValue;
                         } else if (exp.IsFlagBox) {
                             exp.FlagValue = string.Empty;
-                            exp.Warning = string.Empty;
                         }
                     }
                 }
@@ -746,8 +744,8 @@ namespace OpenUtau.App.ViewModels {
                 DocManager.Inst.EndUndoGroup();
             }
         }
-        public void SetFlagFromText(string? text, out string? warning) {
-            warning = null;
+        public void SetFlagFromText(string? text, out string? failureFlags) {
+            failureFlags = null;
             if (AllowNoteEdit && Part != null && selectedNotes.Count > 0) {
                 var dict = new Dictionary<string, float>();
                 if (!string.IsNullOrWhiteSpace(text)) {
@@ -759,9 +757,10 @@ namespace OpenUtau.App.ViewModels {
 
                 var track = DocManager.Inst.Project.tracks[Part.trackNo];
                 DocManager.Inst.StartUndoGroup("command.property.edit");
-                track.GetSupportedExps(DocManager.Inst.Project)
-                    .Where(d => d.isFlag && d.type == UExpressionType.Numerical)
-                    .ForEach(descriptor => {
+
+                var trackExp = track.GetSupportedExps(DocManager.Inst.Project);
+                foreach (var descriptor in trackExp) {
+                    if (descriptor.isFlag && descriptor.type == UExpressionType.Numerical) {
                         if (dict.TryGetValue(descriptor.flag, out float value)) {
                             dict.Remove(descriptor.flag);
                             if (value != descriptor.CustomDefaultValue) {
@@ -773,10 +772,7 @@ namespace OpenUtau.App.ViewModels {
                         } else {
                             DocManager.Inst.ExecuteCmd(new SetNotesSameExpressionCommand(DocManager.Inst.Project, track, Part, selectedNotes, descriptor.abbr, null));
                         }
-                });
-                track.GetSupportedExps(DocManager.Inst.Project)
-                    .Where(d => d.isFlag && d.type == UExpressionType.Options)
-                    .ForEach(descriptor => {
+                    } else if (descriptor.isFlag && descriptor.type == UExpressionType.Options) {
                         bool find = false;
                         for (int i = 0; i < descriptor.options.Length; i++) {
                             string option = descriptor.options[i];
@@ -795,10 +791,10 @@ namespace OpenUtau.App.ViewModels {
                         if (!find) {
                             DocManager.Inst.ExecuteCmd(new SetNotesSameExpressionCommand(DocManager.Inst.Project, track, Part, selectedNotes, descriptor.abbr, null));
                         }
-                    });
+                    }
+                }
                 if (dict.Count > 0) {
-                    ThemeManager.TryGetString("errors.failed.parseflag", out string str);
-                    warning = string.Format(str, string.Join(", ", dict.Keys));
+                    failureFlags = string.Join(", ", dict.Keys);
                 }
                 DocManager.Inst.EndUndoGroup();
             }
@@ -866,7 +862,6 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public partial bool DropDownOpen { get; set; }
         [Reactive] public partial bool HasValue { get; set; } = false;
         [Reactive] public partial FontWeight NameFontWeight { get; set; }
-        [Reactive] public partial string Warning { get; set; } = string.Empty;
 
         private NotePropertiesViewModel parentViewmodel;
 
@@ -927,8 +922,10 @@ namespace OpenUtau.App.ViewModels {
         }
 
         public void SetFlagFromText(string? text) {
-            parentViewmodel.SetFlagFromText(text, out string? warning);
-            Warning = warning ?? string.Empty;
+            parentViewmodel.SetFlagFromText(text, out string? failureFlags);
+            if (failureFlags != null) {
+                DocManager.Inst.ExecuteCmd(new ToastNotification("Pianoroll", "Failed to parse the flag", "errors.failed.parseflag", new[] { failureFlags }));
+            }
         }
 
         public override string ToString() {
