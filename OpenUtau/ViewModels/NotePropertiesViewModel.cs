@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Text;
 using Avalonia.Media;
 using OpenUtau.Classic;
@@ -344,7 +343,7 @@ namespace OpenUtau.App.ViewModels {
                         } else {
                             if (exp.IsNumerical) {
                                 exp.Value = exp.defaultValue + 1; // Assign a different value just in case the text box is empty
-                                exp.Value = exp.defaultValue;
+                                exp.Value = exp.defaultValue; // Reset original value
                             } else if (exp.IsOptions) {
                                 exp.SelectedOption = (int)exp.defaultValue;
                             }
@@ -860,14 +859,14 @@ namespace OpenUtau.App.ViewModels {
         public string abbr;
         public float defaultValue;
 
-        [Reactive] public bool IsNoteSelected { get; set; } = false;
-        [Reactive] public float Value { get; set; }
-        [Reactive] public string FlagValue { get; set; } = string.Empty;
-        [Reactive] public int SelectedOption { get; set; }
-        [Reactive] public bool DropDownOpen { get; set; }
-        [Reactive] public bool HasValue { get; set; } = false;
-        [Reactive] public FontWeight NameFontWeight { get; set; }
-        [Reactive] public string Warning { get; set; } = string.Empty;
+        [Reactive] public partial bool IsNoteSelected { get; set; } = false;
+        [Reactive] public partial float Value { get; set; }
+        [Reactive] public partial string FlagValue { get; set; } = string.Empty;
+        [Reactive] public partial int SelectedOption { get; set; }
+        [Reactive] public partial bool DropDownOpen { get; set; }
+        [Reactive] public partial bool HasValue { get; set; } = false;
+        [Reactive] public partial FontWeight NameFontWeight { get; set; }
+        [Reactive] public partial string Warning { get; set; } = string.Empty;
 
         private NotePropertiesViewModel parentViewmodel;
 
