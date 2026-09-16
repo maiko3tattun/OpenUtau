@@ -618,13 +618,17 @@
       </Border>
 
       <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              BoxShadow="inset 0 0 5 1 #3F000000" ClipToBounds="True" IsHitTestVisible="False">
+              BoxShadow="inset 0 0 5 1 #3F000000" ClipToBounds="True">
         <Grid>
-          <Border Classes="tips" HorizontalAlignment="Center" VerticalAlignment="Center"
-                IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
-            <TextBlock Classes="tips" Grid.Column="0" Margin="10,5"
-                       Text="{DynamicResource tip.notes.basics}"/>
-          </Border>
+          <Grid HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding NotesViewModel.ShowTips}">
+            <Border Classes="tips" BoxShadow="0 0 5 1 #3F000000">
+              <TextBlock Classes="tips" Grid.Column="0" Margin="10,5"
+                         Text="{DynamicResource tip.notes.basics}"/>
+            </Border>
+            <Button Content="×" Command="{Binding HideTips}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" Margin="0"
+                    CornerRadius="4" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                    BorderThickness="1" BorderBrush="{DynamicResource NeutralAccentBrushSemi}"/>
+          </Grid>
           <Border Classes="tips" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0" Padding="4,4,4,2"
                    IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
             <TextBlock Classes="tips" Text="{DynamicResource tip.notes.zoomx}"/>

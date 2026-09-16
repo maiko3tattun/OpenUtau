@@ -318,6 +318,10 @@ namespace OpenUtau.App.ViewModels {
             return string.Join(separator, strings);
         }
 
+        public void HideTips() {
+            NotesViewModel.ShowTips = false;
+        }
+
         private void SetUndoState() {
             CanUndo = DocManager.Inst.GetUndoState(out string? undoNameKey);
             if (!string.IsNullOrWhiteSpace(undoNameKey)) {
