@@ -598,7 +598,7 @@ namespace OpenUtau.App.Controls {
                 keyboardPlayState.Update(args.Pointer, args.GetPosition(element));
             }
             Cursor = null;
-            ViewModel.SetStatusBarText("Keyboard");
+            ViewModel.SetOperationHintText("Keyboard");
             args.Handled = true;
         }
 
@@ -668,7 +668,7 @@ namespace OpenUtau.App.Controls {
                 }
             }
             Cursor = null;
-            ViewModel.SetStatusBarText("Timeline");
+            ViewModel.SetOperationHintText("Timeline");
             args.Handled = true;
         }
 
@@ -1003,7 +1003,7 @@ namespace OpenUtau.App.Controls {
         public void NotesCanvasPointerMoved(object sender, PointerEventArgs args) {
             var control = (Control)sender;
             var point = args.GetCurrentPoint(control);
-            ViewModel.SetStatusBarText("NotesCanvas");
+            ViewModel.SetOperationHintText("NotesCanvas");
             args.Handled = true;
             if (ValueTipCanvas != null) {
                 valueTipPointerPosition = args.GetCurrentPoint(ValueTipCanvas!).Position;
@@ -1230,7 +1230,7 @@ namespace OpenUtau.App.Controls {
         public void ExpCanvasPointerMoved(object sender, PointerEventArgs args) {
             var control = (Control)sender;
             var point = args.GetCurrentPoint(control);
-            ViewModel.SetStatusBarText("ExpCanvas");
+            ViewModel.SetOperationHintText("ExpCanvas");
             args.Handled = true;
             if (ValueTipCanvas != null) {
                 valueTipPointerPosition = args.GetCurrentPoint(ValueTipCanvas!).Position;
@@ -1360,7 +1360,7 @@ namespace OpenUtau.App.Controls {
         }
 
         public void PhonemeCanvasPointerMoved(object sender, PointerEventArgs args) {
-            ViewModel.SetStatusBarText("PhonemeCanvas");
+            ViewModel.SetOperationHintText("PhonemeCanvas");
             args.Handled = true;
             if (ViewModel?.NotesViewModel?.Part == null) {
                 return;
@@ -1425,7 +1425,7 @@ namespace OpenUtau.App.Controls {
 
         public void BackgroundPointerMoved(object sender, PointerEventArgs args) {
             Cursor = null;
-            ViewModel.SetStatusBarText("Background");
+            ViewModel.SetOperationHintText("Background");
             args.Handled = true;
         }
 

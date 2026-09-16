@@ -22,7 +22,7 @@
         <RowDefinition Height="150" 
                        MinHeight="{Binding NotesViewModel.ExpHeightMin}"
                        MaxHeight="{Binding NotesViewModel.ExpHeightMax}"/>
-        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="4"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="60"/>
@@ -713,6 +713,11 @@
                 IsVisible="{Binding NotesViewModel.PlayPosWaitingRendering}" Background="{DynamicResource BackgroundBrushSemi}">
             <TextBlock Text="{DynamicResource progress.waitingrendering}" FontSize="15"/>
           </Border>
+          <Border Classes="tips" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8"
+                IsVisible="{Binding NotesViewModel.ShowOperationHint}" BoxShadow="0 0 5 1 #3F000000"
+                MinWidth="220" MinHeight="54" Margin="0,0,10,70">
+            <TextBlock Classes="tips" Text="{Binding OperationHintText}" FontSize="12"/>
+          </Border>
         </Grid>
       </Border>
       <Grid Grid.Row="3" Grid.Column="1" RowDefinitions="1*,1*">
@@ -742,10 +747,7 @@
           <TextBlock Name="ValueTipText" Margin="2"/>
         </Border>
       </Canvas>
-      <StackPanel Grid.Row="6" Grid.ColumnSpan="4">
-        <TextBlock Height="20" Margin="4,4,4,0" Text="{Binding StatusBarText}"/>
-        <ProgressBar Value="{Binding Progress}" IsVisible="{Binding PianoRollDetached}" Height="4"/>
-      </StackPanel>
+      <ProgressBar Grid.Row="6" Grid.ColumnSpan="4" Value="{Binding Progress}" IsVisible="{Binding PianoRollDetached}"/>
     </Grid>
   </Border>
 </UserControl>
