@@ -236,7 +236,7 @@ namespace OpenUtau.App.ViewModels {
             string separator = "\n";
             switch (pointer) {
                 case "Keyboard":
-                    OperationHintText = GetOperationHintText(["operation.clickplaysound"], separator);
+                    OperationHintText = GetOperationHintText(["operation.clickplaysound"], separator); // Todo: Shift + click to select notes
                     break;
                 case "Timeline":
                     OperationHintText = GetOperationHintText(["operation.clickplayhead", "operation.scroolzoom"], separator);
