@@ -385,6 +385,10 @@
                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
               </Grid>
             </ToggleButton>
+            <ToggleButton Classes="toolbar" Margin="0" Padding="1" Height="20" Width="20" IsChecked="{Binding NotesViewModel.ShowOperationHint}"
+                          ToolTip.Tip="{DynamicResource pianoroll.toggle.operationhint}">
+                <Path Width="18" Height="18" Classes="stroked" Data="M 4 3 H 14 A 2 2 0 0 1 16 5 V 11 A 2 2 0 0 1 14 13 H 8 L 4 16 V 13 H 4 A 2 2 0 0 1 2 11 V 5 A 2 2 0 0 1 4 3 Z"/>
+            </ToggleButton>
             <Border Width="12"/>
             <ListBox Classes="toolbar" SelectedIndex="{Binding ToolIndex}">
                 <ListBox.ItemsPanel>

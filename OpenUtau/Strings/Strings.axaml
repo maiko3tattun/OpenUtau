@@ -613,6 +613,7 @@ Warning: this option removes custom presets.</system:String>
   <system:String x:Key="pianoroll.toggle.livepitch.normal">Live Pitch (Normal): auto-regenerate DiffSinger pitch after edits</system:String>
   <system:String x:Key="pianoroll.toggle.mergephrases">Auto-merge nearby phrases (DiffSinger)</system:String>
   <system:String x:Key="pianoroll.toggle.noteparams">View Note Parameters (\)</system:String>
+  <system:String x:Key="pianoroll.toggle.operationhint">View Operation Hint</system:String>
   <system:String x:Key="pianoroll.toggle.overwritepitch">Toggle Overwrite Pitch Mode</system:String>
   <system:String x:Key="pianoroll.toggle.phoneme">View Phonemes (O)</system:String>
   <system:String x:Key="pianoroll.toggle.phonemizer">View Phonemizer Tags</system:String>
