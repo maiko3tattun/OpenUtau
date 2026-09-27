@@ -84,18 +84,25 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public partial bool PitchOverwrite { get; set; } = Preferences.Default.EditTool.OverwritePitch;
 
         private const string ToolTipSeparator = "\n    ";
-        public string SelectionToolTip => GetOperationHintText(["tools.selection", "tools.tips.leftdragselect", "tools.tips.rightdeselect"], ToolTipSeparator);
-        public string PenToolTip => GetOperationHintText(["tools.pen", "tools.tips.leftdragcreate", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string PenPlusToolTip => GetOperationHintText(["tools.penplus", "tools.tips.leftdragcreate", "tools.tips.rightdelete", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string EraserToolTip => GetOperationHintText(["tools.eraser", "tools.tips.leftdelete", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string DrawPitchToolTip => GetOperationHintText(["tools.drawpitch", "tools.tips.leftdragdraw", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string OverwritePitchToolTip => GetOperationHintText(["tools.overwritepitch", "tools.tips.leftdragdrawoverwrite", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string DrawLinePitchToolTip => GetOperationHintText(["tools.drawlinepitch", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string OverwriteLinePitchToolTip => GetOperationHintText(["tools.overwritelinepitch", "tools.tips.leftdragdrawlineoverwrite", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string KnifeToolTip => GetOperationHintText(["tools.knife", "tools.tips.leftsplit", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], ToolTipSeparator);
-        public string CurveSelectionToolTip => GetOperationHintText(["tools.selection", "tools.tips.leftdragselect", "tools.tips.rightdeselect"], ToolTipSeparator);
-        public string CurvePenToolTip => GetOperationHintText(["tools.pen", "tools.tips.leftdragdraw", "tools.tips.rightdragreset", "tools.tips.shifthorizontal", "tools.tips.shiftctrlline"], ToolTipSeparator);
-        public string CurveEraserToolTip => GetOperationHintText(["tools.eraser", "tools.tips.leftdragreset", "tools.tips.rightdeselect"], ToolTipSeparator);
+        public string SelectionToolTip =>  GetToolHintText(EditTools.CursorTool, ToolTipSeparator);
+        public string PenToolTip => GetToolHintText(EditTools.PenTool, ToolTipSeparator);
+        public string PenPlusToolTip => GetToolHintText(EditTools.PenPlusTool, ToolTipSeparator);
+        public string EraserToolTip => GetToolHintText(EditTools.EraserTool, ToolTipSeparator);
+        public string KnifeToolTip => GetToolHintText(EditTools.KnifeTool, ToolTipSeparator);
+        public string PitchPointToolTip => GetToolHintText(EditTools.PitchPointTool, ToolTipSeparator);
+        public string DrawPitchToolTip => GetToolHintText(EditTools.DrawPitchTool, ToolTipSeparator);
+        public string PitchLineToolTip => GetToolHintText(EditTools.PitchLineTool, ToolTipSeparator);
+        public string PitchSCurveToolTip => GetToolHintText(EditTools.PitchSCurveTool, ToolTipSeparator);
+        public string PitchSineWaveToolTip => GetToolHintText(EditTools.PitchSineWaveTool, ToolTipSeparator);
+        public string PitchSmoothenToolTip => GetToolHintText(EditTools.PitchSmoothenTool, ToolTipSeparator);
+        public string CurveSelectionToolTip => GetToolHintText(CurveTools.CurveSelectTool, ToolTipSeparator);
+        public string CurvePenToolTip => GetToolHintText(CurveTools.CurvePenTool, ToolTipSeparator);
+        public string CurvePitchLineToolTip => GetToolHintText(CurveTools.CurveLineTool, ToolTipSeparator);
+        public string CurveEraserToolTip => GetToolHintText(CurveTools.CurveEraserTool, ToolTipSeparator);
+        public string VerticalStretchToolTip => GetToolHintText(CurveTools.CurveVerticalStretchTool, ToolTipSeparator);
+        public string HorizontalStretchToolTip => GetToolHintText(CurveTools.CurveHorizontalStretchTool, ToolTipSeparator);
+        public string VerticalShiftToolTip => GetToolHintText(CurveTools.CurveVerticalShiftTool, ToolTipSeparator);
+        public string HorizontalShiftToolTip => GetToolHintText(CurveTools.CurveHorizontalShiftTool, ToolTipSeparator);
 
         public ObservableCollectionExtended<MenuItemViewModel> LegacyPlugins { get; private set; }
             = new ObservableCollectionExtended<MenuItemViewModel>();
@@ -242,40 +249,7 @@ namespace OpenUtau.App.ViewModels {
                     OperationHintText = GetOperationHintText(["operation.clickplayhead", "operation.scroolzoom"], separator);
                     break;
                 case "NotesCanvas":
-                    switch (EditTool.CurrentTool) {
-                        case EditTools.CursorTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdragselect", "tools.tips.rightdeselect"], separator);
-                            break;
-                        case EditTools.PenTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdragcreate", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.PenPlusTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdragcreate", "tools.tips.rightdelete", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.EraserTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdelete", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.KnifeTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftsplit", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.PitchPointTool:
-                            //OperationHintText = GetOperationHintText(["tools.tips.leftdragselect", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.DrawPitchTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdragdraw", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.PitchLineTool:
-                            OperationHintText = GetOperationHintText(["tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.altsmoothen", "tools.tips.ctrlselect"], separator);
-                            break;
-                        case EditTools.PitchSCurveTool:
-                            break;
-                        case EditTools.PitchSineWaveTool:
-                            break;
-                        case EditTools.PitchSmoothenTool:
-                            break;
-                        default:
-                            break;
-                    }
+                    OperationHintText = GetToolHintText(EditTool.CurrentTool, separator);
                     break;
                 case "PhonemeCanvas":
                     OperationHintText = GetOperationHintText(["operation.doubleeditphoneme", "operation.timingenvelope"], separator);
@@ -290,19 +264,7 @@ namespace OpenUtau.App.ViewModels {
                         break;
                     }
                     if (exp.type == UExpressionType.Curve) {
-                        switch (CurveViewModel.CurveTool) {
-                            case CurveTools.CurveSelectTool:
-                                OperationHintText = GetOperationHintText(["tools.tips.leftdragselect", "tools.tips.rightdeselect"], separator);
-                                break;
-                            case CurveTools.CurvePenTool:
-                                OperationHintText = GetOperationHintText(["tools.tips.leftdragdraw", "tools.tips.rightdragreset", "tools.tips.shifthorizontal", "tools.tips.shiftctrlline"], separator);
-                                break;
-                            case CurveTools.CurveEraserTool:
-                                OperationHintText = GetOperationHintText(["tools.tips.leftdragreset", "tools.tips.rightdeselect"], separator);
-                                break;
-                            default:
-                                break;
-                        }
+                        OperationHintText = GetToolHintText(CurveViewModel.CurveTool, separator);
                     } else {
                         OperationHintText = GetOperationHintText(["tools.tips.leftexp", "tools.tips.rightreset", "tools.tips.shiftsameexp"], separator);
                     }
@@ -319,6 +281,50 @@ namespace OpenUtau.App.ViewModels {
                 strings.Add(ThemeManager.GetString(key));
             }
             return string.Join(separator, strings);
+        }
+        private string GetToolHintText(object tool, string separator) {
+            switch (tool) {
+                case EditTools.CursorTool:
+                    return GetOperationHintText(["tools.selection", "tools.tips.leftdragselect", "tools.tips.rightdeselect"], separator);
+                case EditTools.PenTool:
+                    return GetOperationHintText(["tools.pen", "tools.tips.leftdragcreate", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
+                case EditTools.PenPlusTool:
+                    return GetOperationHintText(["tools.penplus", "tools.tips.leftdragcreate", "tools.tips.rightdelete", "tools.tips.ctrlselect"], separator);
+                case EditTools.EraserTool:
+                    return GetOperationHintText(["tools.eraser", "tools.tips.leftdelete", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
+                case EditTools.KnifeTool:
+                    return GetOperationHintText(["tools.knife", "tools.tips.leftsplit", "tools.tips.rightdeselect", "tools.tips.ctrlselect"], separator);
+                case EditTools.PitchPointTool:
+                    return GetOperationHintText(["tools.pitchpoint", "tools.tips.leftcreatepoint", "tools.tips.leftdragmovepoint","tools.tips.ctrlselect"], separator);
+                case EditTools.DrawPitchTool:
+                    return GetOperationHintText(["tools.drawpitch", "tools.tips.leftdragdraw", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case EditTools.PitchLineTool:
+                    return GetOperationHintText(["tools.pitchline", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case EditTools.PitchSCurveTool:
+                    return GetOperationHintText(["tools.pitchscurve", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case EditTools.PitchSineWaveTool:
+                    return GetOperationHintText(["tools.pitchsinewave", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case EditTools.PitchSmoothenTool:
+                    return GetOperationHintText(["tools.pitchsmoothen", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case CurveTools.CurveSelectTool:
+                    return GetOperationHintText(["tools.selection", "tools.tips.leftdragselect", "tools.tips.rightdeselect"], separator);
+                case CurveTools.CurvePenTool:
+                    return GetOperationHintText(["tools.pen", "tools.tips.leftdragdraw", "tools.tips.rightdragreset"], separator);
+                case CurveTools.CurveLineTool:
+                    return GetOperationHintText(["tools.line", "tools.tips.leftdragdrawline", "tools.tips.rightdragreset", "tools.tips.ctrlselect"], separator);
+                case CurveTools.CurveEraserTool:
+                    return GetOperationHintText(["tools.eraser", "tools.tips.leftdragreset", "tools.tips.rightdeselect"], separator);
+                case CurveTools.CurveVerticalStretchTool:
+                    return GetOperationHintText(["tools.verticalstretch", "tools.tips.leftdragstretch", "tools.tips.rightdragreset"], separator);
+                case CurveTools.CurveHorizontalStretchTool:
+                    return GetOperationHintText(["tools.horizontalstretch", "tools.tips.leftdragstretch", "tools.tips.rightdragreset"], separator);
+                case CurveTools.CurveVerticalShiftTool:
+                    return GetOperationHintText(["tools.verticalshift", "tools.tips.leftdragshift", "tools.tips.rightdragreset"], separator);
+                case CurveTools.CurveHorizontalShiftTool:
+                    return GetOperationHintText(["tools.horizontalshift", "tools.tips.leftdragshift", "tools.tips.rightdragreset"], separator);
+                default:
+                    return string.Empty;
+            }
         }
 
         public void HideTips() {
