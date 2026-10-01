@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using NAudio.Midi;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
+using OpenUtau.Core.Util;
 using ReactiveUI;
 using ReactiveUI.Primitives;
 using ReactiveUI.SourceGenerators;
@@ -17,18 +18,19 @@ namespace OpenUtau.App.ViewModels {
         private NotesViewModel notesViewModel;
         private UVoicePart? part => notesViewModel.Part;
 
-        [Reactive] public partial bool RecReady { get; set; } = true;
+        [Reactive] public partial bool RecReady { get; set; } = false;
         [Reactive] public partial int MidiDeviceNum { get; set; } = -1;
+        public ObservableCollection<string> DeviceList { get; set; } = new ObservableCollection<string>();
+        [Reactive] public partial int ExpandIntervalMs { get; set; } = Preferences.Default.MidiStepInterval;
 
         private int activeTone = 0;
         private UNote? recordingNote;
         private CancellationTokenSource? _noteExpandCts;
-        private int ExpandIntervalMs = 300; // 更新間隔＝入力感度 (ミリ秒) Prefs
         private bool viewUpdating = true;
 
         public MidiInViewModel(NotesViewModel notesViewModel) {
             this.notesViewModel = notesViewModel;
-            
+
             this.WhenAnyValue(x => x.RecReady)
                 .Subscribe(value => {
                     if (midiIn != null) {
@@ -50,6 +52,10 @@ namespace OpenUtau.App.ViewModels {
                         StopMidiInput();
                     }
                 });
+            this.WhenAnyValue(x => x.ExpandIntervalMs)
+                .Subscribe(value => {
+                    Preferences.Default.MidiStepInterval = value;
+                });
 
             DocManager.Inst.AddSubscriber(this);
             viewUpdating = false;
@@ -59,17 +65,19 @@ namespace OpenUtau.App.ViewModels {
             try {
                 int deviceCount = MidiIn.NumberOfDevices;
                 if (deviceCount == 0) {
-                    DocManager.Inst.ExecuteCmd(new ToastNotification("Pianoroll", "No MIDI input device was found.", "No MIDI input device was found.")); // Todo
+                    DocManager.Inst.ExecuteCmd(new ToastNotification("Pianoroll", "No MIDI input device was found.", "pianoroll.midi.sensitivity"));
                     StopMidiInput();
                     return false;
                 }
 
-                Dictionary<int, string> deviceDict = new Dictionary<int, string>();
+                DeviceList.Clear();
                 for (int i = 0; i < deviceCount; i++) {
-                    deviceDict.Add(i, MidiIn.DeviceInfo(i).ProductName);
+                    DeviceList.Add(MidiIn.DeviceInfo(i).ProductName);
                 }
-                int midiInDeviceNumber = deviceCount - 1;
-                // preferenceを参照
+                int midiInDeviceNumber = 0;
+                if (!string.IsNullOrWhiteSpace(Preferences.Default.MidiDevice) && DeviceList.Contains(Preferences.Default.MidiDevice)) {
+                    midiInDeviceNumber = DeviceList.IndexOf(Preferences.Default.MidiDevice);
+                }
                 SelectMidiDevice(midiInDeviceNumber);
                 return true;
             } catch (Exception e) {
@@ -96,7 +104,11 @@ namespace OpenUtau.App.ViewModels {
 
             string deviceName = MidiIn.DeviceInfo(deviceNumber).ProductName;
             Log.Debug($"MIDI input device selected: {deviceName}");
-            // preference保存
+            if (Preferences.Default.MidiDevice != deviceName) {
+                Preferences.Default.MidiDevice = deviceName;
+                Preferences.Save();
+            }
+
             viewUpdating = true;
             MidiDeviceNum = deviceNumber;
             viewUpdating = false;
@@ -109,7 +121,7 @@ namespace OpenUtau.App.ViewModels {
                 midiIn.Dispose();
                 midiIn = null;
             }
-            //RecReady = false;
+            RecReady = false;
         }
 
         public void StopRecording() {
@@ -163,7 +175,7 @@ namespace OpenUtau.App.ViewModels {
 
             var playhead = DocManager.Inst.playPosTick;
             if (playhead < part.position || part.End <= playhead) {
-                DocManager.Inst.ExecuteCmd(new ToastNotification("Pianoroll", "The playhead is not within the range of the part.", "The playhead is not within the range of the part.")); // Todo
+                DocManager.Inst.ExecuteCmd(new ToastNotification("Pianoroll", "Playhead is not within the range of the part.", "pianoroll.midi.outofrange"));
                 return;
             }
             playhead = playhead - part.position;

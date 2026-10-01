@@ -111,6 +111,9 @@
     <Compile Update="Controls\NotePropertiesControl.axaml.cs">
       <DependentUpon>NotePropertiesControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\MidiPanel.axaml.cs">
+      <DependentUpon>MidiPanel.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
