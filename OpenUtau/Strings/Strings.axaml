@@ -644,7 +644,8 @@ Warning: this option removes custom presets.</system:String>
   <system:String x:Key="pianoroll.menu.searchnote.searchalias">Search Alias</system:String>
   <system:String x:Key="pianoroll.midi.notfound">No MIDI input device was found.</system:String>
   <system:String x:Key="pianoroll.midi.outofrange">Playhead is not within the range of the part.</system:String>
-  <system:String x:Key="pianoroll.midi.sensitivity">Step-in sensitivity:</system:String>
+  <system:String x:Key="pianoroll.midi.sensitivity">Step-input sensitivity:</system:String>
+  <system:String x:Key="pianoroll.midi.recready">Step-input / Real-time Recording</system:String>
   <system:String x:Key="pianoroll.snapdiv">Snap Division</system:String>
   <system:String x:Key="pianoroll.toggle.expressions">View Expressions (L)</system:String>
   <system:String x:Key="pianoroll.toggle.finalpitch">View Final Pitch to Render (R)</system:String>

@@ -117,11 +117,15 @@ namespace OpenUtau.App.ViewModels {
         public void StopMidiInput() {
             StopRecording();
             if (midiIn != null) {
-                midiIn.Stop();
-                midiIn.Dispose();
-                midiIn = null;
+                try {
+                    midiIn.Stop();
+                    midiIn.Dispose();
+                    midiIn = null;
+                } catch (Exception e) {
+                    Log.Error(e, "Failed to stop MIDI input");
+                }
+                RecReady = false;
             }
-            RecReady = false;
         }
 
         public void StopRecording() {
@@ -182,17 +186,18 @@ namespace OpenUtau.App.ViewModels {
             var project = DocManager.Inst.Project;
             var SnapDiv = notesViewModel.SnapDiv;
             int snapUnit = project.resolution * 4 / SnapDiv;
-            int snappedTick = (int)Math.Floor((double)playhead / snapUnit) * snapUnit;
 
-            UNote note = project.CreateNote(tone, snappedTick, snapUnit);
-            recordingNote = note;
-
-            // Extend note while holding the key
-            _noteExpandCts?.Cancel();
-            _noteExpandCts = new CancellationTokenSource();
-            var token = _noteExpandCts.Token;
             if (PlaybackManager.Inst.PlayingMaster) {
                 // MIDI Recording
+                int snappedTick = (int)Math.Round((double)playhead / snapUnit) * snapUnit;
+                UNote note = project.CreateNote(tone, snappedTick, snapUnit);
+                recordingNote = note;
+
+                // Extend note while holding the key
+                _noteExpandCts?.Cancel();
+                _noteExpandCts = new CancellationTokenSource();
+                var token = _noteExpandCts.Token;
+
                 Task.Run(async () => {
                     try {
                         while (!token.IsCancellationRequested) {
@@ -202,42 +207,58 @@ namespace OpenUtau.App.ViewModels {
                                 return;
                             }
                             playhead = DocManager.Inst.playPosTick - part.position;
-                            snappedTick = (int)Math.Floor((double)playhead / snapUnit) * snapUnit;
-                            if (recordingNote != null && recordingNote.End < snappedTick) {
-                                DocManager.Inst.PostOnUIThread(() => {
+                            snappedTick = (int)Math.Round((double)playhead / snapUnit) * snapUnit;
+                            DocManager.Inst.PostOnUIThread(() => {
+                                if (recordingNote != null && recordingNote.End < snappedTick) {
                                     DocManager.Inst.ExecuteCmd(new ResizeNoteCommand(part, recordingNote, snappedTick - recordingNote.End));
-                                });
-                            }
+                                }
+                            });
                         }
                     } catch (TaskCanceledException) {
                         // Do nothing when the key is released
                     }
                 }, token);
+
+                // Create new note
+                DocManager.Inst.PostOnUIThread(() => {
+                    DocManager.Inst.StartUndoGroup("command.note.add");
+                    DocManager.Inst.ExecuteCmd(new AddNoteCommand(part, note));
+                    DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(note.End + part.position));
+                });
             } else {
                 // Step Input
+                int snappedTick = (int)Math.Floor((double)playhead / snapUnit) * snapUnit;
+                UNote note = project.CreateNote(tone, snappedTick, snapUnit);
+                recordingNote = note;
+
+                // Extend note while holding the key
+                _noteExpandCts?.Cancel();
+                _noteExpandCts = new CancellationTokenSource();
+                var token = _noteExpandCts.Token;
+
                 Task.Run(async () => {
                     try {
                         while (!token.IsCancellationRequested) {
                             await Task.Delay(ExpandIntervalMs, token);
-                            if (recordingNote != null) {
-                                DocManager.Inst.PostOnUIThread(() => {
+                            DocManager.Inst.PostOnUIThread(() => {
+                                if (recordingNote != null) {
                                     DocManager.Inst.ExecuteCmd(new ResizeNoteCommand(part, recordingNote, snapUnit));
                                     DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(note.End + part.position));
-                                });
-                            }
+                                }
+                            });
                         }
                     } catch (TaskCanceledException) {
                         // Do nothing when the key is released
                     }
                 }, token);
-            }
 
-            // Create new note
-            DocManager.Inst.PostOnUIThread(() => {
-                DocManager.Inst.StartUndoGroup("command.note.add");
-                DocManager.Inst.ExecuteCmd(new AddNoteCommand(part, note));
-                DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(note.End + part.position));
-            });
+                // Create new note
+                DocManager.Inst.PostOnUIThread(() => {
+                    DocManager.Inst.StartUndoGroup("command.note.add");
+                    DocManager.Inst.ExecuteCmd(new AddNoteCommand(part, note));
+                    DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(note.End + part.position));
+                });
+            }
         }
 
         private void NoteOff(int tone) {

@@ -8,7 +8,7 @@
              Focusable="False">
   <Grid RowDefinitions="Auto,Auto" Width="200" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
-      <ToggleButton Content="●" IsChecked="{Binding MidiInViewModel.RecReady}"
+      <ToggleButton Content="●" IsChecked="{Binding MidiInViewModel.RecReady}" ToolTip.Tip="{DynamicResource pianoroll.midi.recready}"
                     Width="20" Height="20" Foreground="DarkRed" Classes="toolbar" Margin="4"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
         <ToggleButton.Styles>
