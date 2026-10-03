@@ -1905,7 +1905,7 @@ namespace OpenUtau.App.Controls {
                 case Key.OemOpenBrackets:
                     // move playhead left
                     if (isNone) {
-                        playVm.MovePlayPos(playVm.PlayPosTick - snapUnit);
+                        playVm.MovePlayPos(playVm.PlayPosTick - notesVm.GetPrevSnapUnit(playVm.PlayPosTick));
                         return true;
                     }
                     // to selection start
@@ -1924,7 +1924,7 @@ namespace OpenUtau.App.Controls {
                 case Key.OemCloseBrackets:
                     // move playhead right
                     if (isNone) {
-                        playVm.MovePlayPos(playVm.PlayPosTick + snapUnit);
+                        playVm.MovePlayPos(playVm.PlayPosTick + notesVm.GetNextSnapUnit(playVm.PlayPosTick));
                         return true;
                     }
                     // to selection end

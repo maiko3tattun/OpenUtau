@@ -186,7 +186,6 @@ namespace OpenUtau.App.Controls {
                     double swingOffset = maxSwingOffset * normalizedSwing;
 
                     for (int tick = barTick + ticksPerLine; tick < nextBarTick; tick += ticksPerLine) {
-                        SnapTicks?.Add(tick);
                         project.timeAxis.TickPosToBarBeat(tick, out int snapBar, out int snapBeat, out int snapRemainingTicks);
                         var pen = snapRemainingTicks != 0 ? penDanshed : penBeatUnit;
 
@@ -197,6 +196,7 @@ namespace OpenUtau.App.Controls {
                                 visualTick += swingOffset;
                             }
                         }
+                        SnapTicks?.Add((int)visualTick);
 
                         x = Math.Round(visualTick * TickWidth - pixelOffset) + 0.5;
                         y = ShowBar ? 24 : 0;

@@ -287,7 +287,7 @@ namespace OpenUtau.App.Views {
                 newEnd = notesVm.GetSnappedTick(newEnd, 2);
             }
             int deltaDuration = newEnd - note.End;
-            int minNoteTicks = notesVm.IsSnapOn ? notesVm.GetMinNoteDuration(note.position) : 15;
+            int minNoteTicks = notesVm.IsSnapOn ? notesVm.GetNextSnapUnit(note.position) : 15;
             if (deltaDuration < 0) {
                 int maxNegDelta = note.duration - minNoteTicks;
                 if (notesVm.Selection.Count > 0) {
@@ -356,8 +356,8 @@ namespace OpenUtau.App.Views {
             int minNoteTicks = 15;
             if (notesVm.IsSnapOn) {
                 minNoteTicks = fromStart
-                ? notesVm.GetMinNoteDuration(newTick)
-                : notesVm.GetMinNoteDuration(note.position);
+                ? notesVm.GetNextSnapUnit(newTick)
+                : notesVm.GetNextSnapUnit(note.position);
             }
             if (deltaDuration < 0) {
                 int maxNegDelta = note.duration - minNoteTicks;
@@ -462,7 +462,7 @@ namespace OpenUtau.App.Views {
             // Nothing to split when no split point is valid (e.g. snapping is on and the
             // note is shorter than two snap units): Update() would build an invalid range.
             int minNoteTicks = notesVm.IsSnapOn
-                ? notesVm.GetMinNoteDuration(note.position)
+                ? notesVm.GetNextSnapUnit(note.position)
                 : 15;
             if (note.duration <= minNoteTicks) {
                 return;
@@ -494,7 +494,7 @@ namespace OpenUtau.App.Views {
             int deltaDuration = notesVm.IsSnapOn
                 ? roundedSnappedTick - note.End
                 : tick - note.End;
-            int minNoteTicks = notesVm.IsSnapOn ? notesVm.GetMinNoteDuration(note.position) : 15;
+            int minNoteTicks = notesVm.IsSnapOn ? notesVm.GetNextSnapUnit(note.position) : 15;
             int maxNegDelta = note.duration - minNoteTicks;
             int maxNoteTicks = notesVm.IsSnapOn
                 ? (oldDur - 1) / minNoteTicks * minNoteTicks

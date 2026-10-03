@@ -424,17 +424,17 @@ namespace OpenUtau.App.ViewModels {
             Swing = 0;
         }
 
-        public int GetSnappedTick(int tick, int roundMode = 0) {
-            return MusicMath.GetSnappedTick(Project.resolution, tick, Part?.position ?? 0, SnapDiv, Swing, roundMode);
+        public int GetSnappedTick(int position, int roundMode = 0) {
+            return MusicMath.GetSnappedTick(Project.resolution, position, Part?.position ?? 0, SnapDiv, Swing, roundMode);
         }
 
-        public int GetMinNoteDuration(int notePosition, int roundMode = 0) {
-            return MusicMath.GetEffectiveSnapUnit(Project.resolution, notePosition, Part?.position ?? 0, SnapDiv, Swing);
+        public int GetNextSnapUnit(int position, int roundMode = 0) {
+            return MusicMath.GetEffectiveSnapUnit(Project.resolution, position, Part?.position ?? 0, SnapDiv, Swing);
         }
 
-        public int GetPrevSnapUnit(int notePosition, int roundMode = 0) {
+        public int GetPrevSnapUnit(int position, int roundMode = 0) {
             int snapUnit = Project.resolution * 4 / SnapDiv;
-            var nextSnapUnit = GetMinNoteDuration(notePosition);
+            var nextSnapUnit = GetNextSnapUnit(position);
             return snapUnit * 2 - nextSnapUnit;
         }
 
@@ -551,7 +551,7 @@ namespace OpenUtau.App.ViewModels {
             }
             int tick = PointToTick(point);
             int snappedTick = GetSnappedTick(tick);
-            int minNoteTicks = GetMinNoteDuration(tick);
+            int minNoteTicks = GetNextSnapUnit(tick);
             UNote note = project.CreateNote(tone, snappedTick,
                 useLastLength ? _lastNoteLength : IsSnapOn ? minNoteTicks : 15);
             DocManager.Inst.ExecuteCmd(new AddNoteCommand(Part, note));
@@ -862,7 +862,7 @@ namespace OpenUtau.App.ViewModels {
             int DEFAULT_TONE = 12 * 5; // C4
             int tone = fromNote?.tone ?? DEFAULT_TONE;
             int tick = fromNote?.RightBound ?? (int)TickOffset;
-            int dur = fromNote?.duration ?? GetMinNoteDuration(tick);
+            int dur = fromNote?.duration ?? GetNextSnapUnit(tick);
             DocManager.Inst.StartUndoGroup("command.note.add");
             UNote note = DocManager.Inst.Project.CreateNote(tone, tick, dur);
             DocManager.Inst.ExecuteCmd(new AddNoteCommand(Part, note));
@@ -889,7 +889,7 @@ namespace OpenUtau.App.ViewModels {
             var selectedNotes = Selection.ToList();
             var position = selectedNotes.First().position;
             var deltaTicks = times > 0
-                ? GetMinNoteDuration(position)
+                ? GetNextSnapUnit(position)
                 : -GetPrevSnapUnit(position);
 
             DocManager.Inst.StartUndoGroup("command.note.move");
@@ -905,7 +905,7 @@ namespace OpenUtau.App.ViewModels {
             var selectedNotes = Selection.ToList();
             var end = selectedNotes.First().End;
             var deltaTicks = times > 0
-                ? GetMinNoteDuration(end)
+                ? GetNextSnapUnit(end)
                 : -GetPrevSnapUnit(end);
 
             // ignore if change would make a note smaller than minimal size
@@ -913,7 +913,7 @@ namespace OpenUtau.App.ViewModels {
                 UNote smallestNote = selectedNotes.MinBy(n => n.duration)!;
 
                 var project = DocManager.Inst.Project;
-                int minNoteTicks = IsSnapOn ? GetMinNoteDuration(smallestNote.position) : 15;
+                int minNoteTicks = IsSnapOn ? GetNextSnapUnit(smallestNote.position) : 15;
 
                 if (smallestNote.duration + deltaTicks < minNoteTicks) {
                     return;
