@@ -364,7 +364,10 @@ namespace OpenUtau.App.ViewModels {
             if (cmd is NoteCommand) {
                 if (cmd is ChangeNoteLyricCommand) {
                     Lyric = note.lyric;
-                    CompletedLyric = note.CompletedLyric;
+                    if (string.IsNullOrWhiteSpace(Lyric) && Part != null) {
+                        var track = DocManager.Inst.Project.tracks[Part.trackNo];
+                        CompletedLyric = track.Phonemizer.CompleteLyrics(note.lyric, note.tone, DocManager.Inst.Project.key);
+                    }
                     this.RaisePropertyChanged(nameof(Lyric));
                     this.RaisePropertyChanged(nameof(CompletedLyric));
                 } else if (cmd is MoveNoteCommand) {
@@ -463,7 +466,7 @@ namespace OpenUtau.App.ViewModels {
         public void SetNoteParams(string tag, object? obj) {
             if (AllowNoteEdit && Part != null && selectedNotes.Count > 0) {
                 if (tag == "Lyric") {
-                    if (obj is string s && !string.IsNullOrEmpty(s)) {
+                    if (obj is string s) {
                         foreach (UNote note in selectedNotes) {
                             DocManager.Inst.ExecuteCmd(new ChangeNoteLyricCommand(Part, note, s));
                         }
