@@ -154,8 +154,20 @@ namespace OpenUtau.Api {
         public string Language { get; set; }
         internal Exception? SetUpException { get; set; }
 
-        protected virtual string[] Solfages => DefaultSolfages;
-        private static readonly string[] DefaultSolfages = ["do", "do", "re", "re", "mi", "fa", "fa", "sol", "sol", "la", "la", "si"];
+        private string[] Solfages {
+            get {
+                switch (Language.ToLower()) {
+                    case "ja":
+                        return ["ど", "ど", "れ", "れ", "み", "ふぁ", "ふぁ", "そ", "そ", "ら", "ら", "し"];
+                    case "ko":
+                        return ["도", "도", "레", "레", "미", "파", "파", "솔", "솔", "라", "라", "시"];
+                    case "zh":
+                        return ["duo", "duo", "rui", "rui", "mi", "fa", "fa", "suo", "suo", "la", "la", "xi"];
+                    default:
+                        return ["do", "do", "re", "re", "mi", "fa", "fa", "sol", "sol", "la", "la", "si"];
+                }
+            }
+        }
 
         protected double bpm;
         protected TimeAxis timeAxis;
