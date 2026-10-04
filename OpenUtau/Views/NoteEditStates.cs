@@ -468,7 +468,7 @@ namespace OpenUtau.App.Views {
                 return;
             }
             int maxLeftNoteTicks = notesVm.IsSnapOn
-                ? (note.duration - 1) / minNoteTicks * minNoteTicks
+                ? notesVm.GetSnappedTick(note.position + note.duration - 1) - note.position
                 : note.duration - 15;
             if (maxLeftNoteTicks < minNoteTicks) {
                 return;
@@ -497,7 +497,7 @@ namespace OpenUtau.App.Views {
             int minNoteTicks = notesVm.IsSnapOn ? notesVm.GetNextSnapUnit(note.position) : 15;
             int maxNegDelta = note.duration - minNoteTicks;
             int maxNoteTicks = notesVm.IsSnapOn
-                ? (oldDur - 1) / minNoteTicks * minNoteTicks
+                ? notesVm.GetSnappedTick(note.position + oldDur - 1) - note.position
                 : oldDur - 15;
             int maxDelta = maxNoteTicks - note.duration;
             // maxNegDelta is rounded down to the grid, so the bounds can cross; fall back to

@@ -973,7 +973,7 @@ namespace OpenUtau.App.ViewModels {
 
         public void PasteNotes() {
             if (Part != null && DocManager.Inst.NotesClipboard != null && DocManager.Inst.NotesClipboard.Count > 0) {
-                int left = GetSnappedTick(DocManager.Inst.playPosTick);
+                int left = MusicMath.GetSnappedTick(Project.resolution, DocManager.Inst.playPosTick, 0, SnapDiv, Swing);
                 int minPosition = DocManager.Inst.NotesClipboard.Select(note => note.position).Min();
                 //If PlayPos is before the beginning of the part, don't paste.
                 if (left < Part.position) {
@@ -1013,7 +1013,7 @@ namespace OpenUtau.App.ViewModels {
             }
 
             if (Part != null && DocManager.Inst.NotesClipboard != null && DocManager.Inst.NotesClipboard.Count > 0) {
-                int left = GetSnappedTick(DocManager.Inst.playPosTick);
+                int left = MusicMath.GetSnappedTick(Project.resolution, DocManager.Inst.playPosTick, 0, SnapDiv, Swing);
                 int minPosition = DocManager.Inst.NotesClipboard.Select(note => note.position).Min();
                 //If PlayPos is before the beginning of the part, don't paste.
                 if (left < Part.position) {
