@@ -890,9 +890,13 @@ namespace OpenUtau.App.ViewModels {
             }
             var selectedNotes = Selection.ToList();
             var position = selectedNotes.First().position;
-            var deltaTicks = times > 0
-                ? GetNextSnapUnit(position)
-                : -GetPrevSnapUnit(position);
+            var deltaTicks = 15 * Math.Sign(times); 
+            if (IsSnapOn) {
+                deltaTicks = times > 0
+                    ? GetNextSnapUnit(position)
+                    : -GetPrevSnapUnit(position);
+            }
+            deltaTicks = Math.Max(deltaTicks, -selectedNotes.Min(note => note.position));
 
             DocManager.Inst.StartUndoGroup("command.note.move");
             DocManager.Inst.ExecuteCmd(new MoveNoteCommand(Part, selectedNotes, deltaTicks, 0));

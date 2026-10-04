@@ -140,6 +140,10 @@ namespace OpenUtau.App.Controls {
             }
             var project = Core.DocManager.Inst.Project;
             int snapUnit = project.resolution * 4 / SnapDiv;
+            int baseSnapUnit = snapUnit;
+            double maxSwingOffset = baseSnapUnit / 3.0;
+            double normalizedSwing = Math.Max(0, Math.Min(100, Swing)) / 100.0;
+            double swingOffset = maxSwingOffset * normalizedSwing;
             while (snapUnit * TickWidth < ViewConstants.MinTicklineWidth) {
                 snapUnit *= 2; // Avoid drawing too dense.
             }
@@ -181,17 +185,13 @@ namespace OpenUtau.App.Controls {
                 }
 
                 if (nextBarTick > leftTick) {
-                    double maxSwingOffset = snapUnit / 3.0;
-                    double normalizedSwing = Math.Max(0, Math.Min(100, Swing)) / 100.0;
-                    double swingOffset = maxSwingOffset * normalizedSwing;
-
                     for (int tick = barTick + ticksPerLine; tick < nextBarTick; tick += ticksPerLine) {
                         project.timeAxis.TickPosToBarBeat(tick, out int snapBar, out int snapBeat, out int snapRemainingTicks);
                         var pen = snapRemainingTicks != 0 ? penDanshed : penBeatUnit;
 
                         double visualTick = tick;
                         if (Swing > 0 && SnapDiv > 0) {
-                            long gridIndex = (long)Math.Round((double)tick / snapUnit);
+                            long gridIndex = (long)Math.Round((double)tick / baseSnapUnit);
                             if (gridIndex % 2 != 0) {
                                 visualTick += swingOffset;
                             }
