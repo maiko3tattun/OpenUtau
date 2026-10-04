@@ -154,7 +154,7 @@ namespace OpenUtau.Api {
         public string Language { get; set; }
         internal Exception? SetUpException { get; set; }
 
-        private string[] Solfages {
+        private string[] Solfeges {
             get {
                 if (Language == null) return ["do", "do", "re", "re", "mi", "fa", "fa", "sol", "sol", "la", "la", "si"];
                 switch (Language.ToLower()) {
@@ -210,7 +210,7 @@ namespace OpenUtau.Api {
             if (!string.IsNullOrWhiteSpace(lyric)) return lyric;
             int index = (tone - key) % 12;
             if (index < 0) index += 12;
-            return Solfages[index];
+            return Solfeges[index];
         }
 
         /// <summary>
