@@ -164,6 +164,7 @@ namespace OpenUtau.App.Controls {
         private readonly DispatcherTimer hoverTimer;
         private Point lastPointerPos;
         private readonly Dictionary<(Color color, byte alpha, int thickness), Pen> glowPens = new();
+        private readonly IBrush fallbackedLyricBrush;
 
         private PolylineGeometry polylineGeometry = new PolylineGeometry();
         private Points points = new Points();
@@ -177,6 +178,7 @@ namespace OpenUtau.App.Controls {
         public NotesCanvas() {
             ClipToBounds = true;
             pointGeometry = new EllipseGeometry(new Rect(-2.5, -2.5, 5, 5));
+            fallbackedLyricBrush = new SolidColorBrush(Avalonia.Media.Colors.White, 0.6);
 
             highlightTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1000.0 / 30.0) };
             highlightTimer.Tick += (_, _) => UpdatePlaybackHighlight(false);
@@ -651,9 +653,7 @@ namespace OpenUtau.App.Controls {
             }
             string displayLyric = note.CompletedLyric;
             bool isCompleted = note.lyric != note.CompletedLyric;
-            IBrush textBrush = isCompleted
-                ? new SolidColorBrush(Avalonia.Media.Colors.White, 0.6)
-                : Brushes.White;
+            IBrush textBrush = isCompleted ? fallbackedLyricBrush : Brushes.White;
             int txtsize = 12;
             var textLayout = TextLayoutCache.Get(displayLyric, textBrush, txtsize);
             if (txtsize > size.Height) {
