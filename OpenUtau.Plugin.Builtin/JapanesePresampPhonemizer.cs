@@ -12,6 +12,7 @@ using OpenUtau.Core;
 namespace OpenUtau.Plugin.Builtin {
     [Phonemizer("Japanese presamp Phonemizer", "JA VCV & CVVC", "Maiko", language: "JA")]
     public class JapanesePresampPhonemizer : Phonemizer {
+
         // CV, VCV, CVVCを含むすべての日本語VBをサポートする予定です。Will support all Japanese VBs including CV, VCV, CVVC
         // 基本的な仕様はpresampに準拠します。Basic behavior conforms to presamp
         // 歌詞に書かれた"強"などの表情は非対応。VoiceColorでやってもらいます。Append suffixes such as "強" written in the lyrics are not supported

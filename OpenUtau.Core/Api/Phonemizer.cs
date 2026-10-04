@@ -156,6 +156,7 @@ namespace OpenUtau.Api {
 
         private string[] Solfages {
             get {
+                if (Language == null) return ["do", "do", "re", "re", "mi", "fa", "fa", "sol", "sol", "la", "la", "si"];
                 switch (Language.ToLower()) {
                     case "ja":
                         return ["ど", "ど", "れ", "れ", "み", "ふぁ", "ふぁ", "そ", "そ", "ら", "ら", "し"];
