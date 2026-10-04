@@ -1554,6 +1554,8 @@ namespace OpenUtau.App.Controls {
             }
             var project = DocManager.Inst.Project;
             int snapUnit = project.resolution * 4 / notesVm.SnapDiv;
+            int nextSnapUnit = MusicMath.GetEffectiveSnapUnit(project.resolution, playVm.PlayPosTick, 0, notesVm.SnapDiv, notesVm.Swing);
+            int prevSnapUnit = snapUnit * 2 - nextSnapUnit;
 
             bool isNone = args.KeyModifiers == KeyModifiers.None;
             bool isAlt = args.KeyModifiers == KeyModifiers.Alt;
@@ -1905,7 +1907,7 @@ namespace OpenUtau.App.Controls {
                 case Key.OemOpenBrackets:
                     // move playhead left
                     if (isNone) {
-                        playVm.MovePlayPos(playVm.PlayPosTick - notesVm.GetPrevSnapUnit(playVm.PlayPosTick));
+                        playVm.MovePlayPos(playVm.PlayPosTick - prevSnapUnit);
                         return true;
                     }
                     // to selection start
@@ -1924,7 +1926,7 @@ namespace OpenUtau.App.Controls {
                 case Key.OemCloseBrackets:
                     // move playhead right
                     if (isNone) {
-                        playVm.MovePlayPos(playVm.PlayPosTick + notesVm.GetNextSnapUnit(playVm.PlayPosTick));
+                        playVm.MovePlayPos(playVm.PlayPosTick + nextSnapUnit);
                         return true;
                     }
                     // to selection end

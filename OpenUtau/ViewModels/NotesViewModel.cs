@@ -128,6 +128,7 @@ namespace OpenUtau.App.ViewModels {
             SetSnapUnitCommand = ReactiveCommand.Create<int>(div => {
                 userSnapDiv = div;
                 Project.snapDiv = div;
+                Project.Saved = false;
                 UpdateSnapDiv();
             });
             SetSwingAmountCommand = ReactiveCommand.Create(() => {
@@ -135,9 +136,10 @@ namespace OpenUtau.App.ViewModels {
                     ?.MainWindow! as MainWindow;
                 if (parent == null) return;
                 DocManager.Inst.PostOnUIThread(() => {
-                    var dialog = new SliderDialog(ThemeManager.GetString("pianoroll.snapdiv.swing"), Swing, 10, 100, 10);
+                    var dialog = new SliderDialog(ThemeManager.GetString("pianoroll.snapdiv.swing"), Project.swing, 10, 100, 10);
                     dialog.onFinish = value => {
                         Project.swing = (int)value;
+                        Project.Saved = false;
                         UpdateSnapDiv();
                     };
                     dialog.ShowDialog(parent);
